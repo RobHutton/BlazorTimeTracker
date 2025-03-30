@@ -1,25 +1,25 @@
-﻿namespace TimeTracker.Shared.Models
+﻿namespace TimeTracker.Shared.Models;
+
+public class Result<T>
 {
-    public class Result
+    public bool IsSuccess { get; }
+    public bool IsFailure => !IsSuccess;
+    public string? Error { get; }
+    public T? Value { get; }
+
+    protected Result(T? value, bool isSuccess, string? error)
     {
-        public bool IsSuccess { get; }
-        public bool IsFailure => !IsSuccess;
-        public string? Error { get; }
+        if (isSuccess && error != null)
+            throw new InvalidOperationException("Success result cannot have an error.");
+        if (!isSuccess && error == null)
+            throw new InvalidOperationException("Failure result must have an error.");
 
-        protected Result(bool isSuccess, string? error)
-        {
-            if (isSuccess && error != null)
-                throw new InvalidOperationException("Success result cannot have an error.");
-            if (!isSuccess && error == null)
-                throw new InvalidOperationException("Failure result must have an error.");
-
-            IsSuccess = isSuccess;
-            Error = error;
-        }
-
-        public static Result Success() => new Result(true, null);
-
-        public static Result Fail(string error) => new Result(false, error);
+        Value = value;
+        IsSuccess = isSuccess;
+        Error = error;
     }
 
+    public static Result<T> Success(T value) => new(value, true, null);
+    public static Result<T> Fail(string error) => new(default, false, error);
 }
+

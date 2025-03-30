@@ -1,24 +1,64 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TimeTracker.Shared.Entities;
+using TimeTracker.API.Services;
+using TimeTracker.Shared.Dtos.TimeEntry;
 
 namespace TimeTracker.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TimeEntryController : ControllerBase
+    public class TimeEntryController(ITimeEntryService timeEntryService) : ControllerBase
     {
-        private static readonly List<TimeEntry> _timeEntries =
-        [
-            new TimeEntry { Id = 1, Project = "Time Tracker App", End = DateTime.Now.AddDays(7) },
-            new TimeEntry { Id = 2, Project = "Time Tracker App", Start = DateTime.Now.AddDays(1), End = DateTime.Now.AddDays(2) },
-            new TimeEntry { Id = 3, Project = "Time Tracker App", Start = DateTime.Now.AddDays(2), End = DateTime.Now.AddDays(3) },
-            new TimeEntry { Id = 4, Project = "Time Tracker App", Start = DateTime.Now.AddDays(3), End = DateTime.Now.AddDays(4) },
-            new TimeEntry { Id = 5, Project = "Time Tracker App", Start = DateTime.Now.AddDays(4), End = DateTime.Now.AddDays(5) }
-        ];
+        private readonly ITimeEntryService _timeEntryService = timeEntryService;
+
         [HttpGet]
-        public ActionResult<List<TimeEntry>> GetAllTimeEntries()
+        public ActionResult<List<TimeEntryResponse>> GetTimeEntries()
         {
-            return Ok(_timeEntries);
+            var result = _timeEntryService.GetTimeEntries();
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+            return BadRequest(result.Error);
+        }
+        [HttpGet("{id}")]
+        public ActionResult<List<TimeEntryResponse>> GetTimeEntryById(int id)
+        {
+            var result = _timeEntryService.GetTimeEntryById(id);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+            return BadRequest(result.Error);
+        }
+        [HttpPost]
+        public ActionResult<List<TimeEntryResponse>> CreateTimeEntry(TimeEntryCreateRequest createRequest)
+        {
+            var result = _timeEntryService.CreateTimeEntry(createRequest);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+            return BadRequest(result.Error);
+        }
+        [HttpPut("{id}")]
+        public ActionResult<List<TimeEntryResponse>> UpdateTimeEntry(int id, TimeEntryUpdateRequest updateRequest)
+        {
+            var result = _timeEntryService.UpdateTimeEntry(id, updateRequest);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+            return BadRequest(result.Error);
+        }
+        [HttpDelete("{id}")]
+        public ActionResult<List<TimeEntryResponse>> DeleteTimeEntry(int id)
+        {
+            var result = _timeEntryService.DeleteTimeEntry(id);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+            return BadRequest(result.Error);
         }
     }
 }
