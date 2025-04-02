@@ -18,7 +18,7 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository, ILogger<
         catch (Exception ex)
         {
             _logger.LogError(ex, "{error}", Error.GetTimeEntries);
-            return Result<List<TimeEntryResponse>>.Fail(Error.GetTimeEntries);
+            return Result<List<TimeEntryResponse>>.Fail($"{Error.GetTimeEntries}: {ex.Message}");
         }
     }
 
@@ -34,7 +34,7 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository, ILogger<
         catch (Exception ex)
         {
             _logger.LogError(ex, "{error}", Error.CreateTimeEntry);
-            return Result<List<TimeEntryResponse>>.Fail(Error.CreateTimeEntry);
+            return Result<List<TimeEntryResponse>>.Fail($"{Error.CreateTimeEntry}: {ex.Message}");
         }
     }
 
@@ -50,7 +50,7 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository, ILogger<
         catch (Exception ex)
         {
             _logger.LogError(ex, "{error}", Error.UpdateTimeEntry);
-            return Result<List<TimeEntryResponse>>.Fail(Error.UpdateTimeEntry);
+            return Result<List<TimeEntryResponse>>.Fail($"{Error.UpdateTimeEntry}: {ex.Message}");
         }
     }
 
@@ -65,12 +65,12 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository, ILogger<
         catch (EntityNotFoundException ex)
         {
             _logger.LogError(ex, "{error}", Error.DeleteTimeEntry);
-            return Result<List<TimeEntryResponse>>.Fail(Error.DeleteTimeEntry);
+            return Result<List<TimeEntryResponse>>.Fail($"{Error.DeleteTimeEntry}: {ex.Message}");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "{error}", Error.DeleteTimeEntry);
-            return Result<List<TimeEntryResponse>>.Fail(Error.DeleteTimeEntry);
+            return Result<List<TimeEntryResponse>>.Fail($"{Error.DeleteTimeEntry}: {ex.Message}");
         }
     }
 
@@ -89,12 +89,12 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository, ILogger<
         catch (EntityNotFoundException ex)
         {
             _logger.LogError(ex, "{error}", Error.GetTimeEntryById);
-            return Result<TimeEntryResponse>.Fail(Error.GetTimeEntryById);
+            return Result<TimeEntryResponse>.Fail($"{Error.GetTimeEntryById}: {ex.Message}");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "{error}", Error.GetTimeEntryById);
-            return Result<TimeEntryResponse>.Fail(Error.GetTimeEntryById);
+            return Result<TimeEntryResponse>.Fail($"{Error.GetTimeEntryById}: {ex.Message}");
         }
     }
 }
