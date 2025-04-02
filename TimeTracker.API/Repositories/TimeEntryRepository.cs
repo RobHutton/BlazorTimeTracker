@@ -48,6 +48,6 @@ public class TimeEntryRepository(DataContext dbContext) : ITimeEntryRepository
         await _dbContext.SaveChangesAsync();  // Add this line if using EF
 
         // Return the updated list
-        return await _dbContext.TimeEntries.ToListAsync();  // Return updated list from DB
+        return await GetTimeEntries();  // Return updated list from DB
     }
 }
