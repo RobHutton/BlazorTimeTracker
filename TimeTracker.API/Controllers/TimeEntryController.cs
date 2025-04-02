@@ -1,64 +1,61 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TimeTracker.API.Services;
-using TimeTracker.Shared.Dtos.TimeEntry;
+﻿global using Microsoft.AspNetCore.Mvc;
 
-namespace TimeTracker.API.Controllers
+namespace TimeTracker.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class TimeEntryController(ITimeEntryService timeEntryService) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TimeEntryController(ITimeEntryService timeEntryService) : ControllerBase
-    {
-        private readonly ITimeEntryService _timeEntryService = timeEntryService;
+    private readonly ITimeEntryService _timeEntryService = timeEntryService;
 
-        [HttpGet]
-        public ActionResult<List<TimeEntryResponse>> GetTimeEntries()
+    [HttpGet]
+    public async Task<ActionResult<List<TimeEntryResponse>>> GetTimeEntries()
+    {
+        var result = await _timeEntryService.GetTimeEntries();
+        if (result.IsSuccess)
         {
-            var result = _timeEntryService.GetTimeEntries();
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            return BadRequest(result.Error);
+            return Ok(result.Value);
         }
-        [HttpGet("{id}")]
-        public ActionResult<List<TimeEntryResponse>> GetTimeEntryById(int id)
+        return BadRequest(result.Error);
+    }
+    [HttpGet("{id}")]
+    public async Task<ActionResult<List<TimeEntryResponse>>> GetTimeEntryById(int id)
+    {
+        var result = await _timeEntryService.GetTimeEntryById(id);
+        if (result.IsSuccess)
         {
-            var result = _timeEntryService.GetTimeEntryById(id);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            return BadRequest(result.Error);
+            return Ok(result.Value);
         }
-        [HttpPost]
-        public ActionResult<List<TimeEntryResponse>> CreateTimeEntry(TimeEntryCreateRequest createRequest)
+        return BadRequest(result.Error);
+    }
+    [HttpPost]
+    public async Task<ActionResult<List<TimeEntryResponse>>> CreateTimeEntry(TimeEntryCreateRequest createRequest)
+    {
+        var result = await _timeEntryService.CreateTimeEntry(createRequest);
+        if (result.IsSuccess)
         {
-            var result = _timeEntryService.CreateTimeEntry(createRequest);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            return BadRequest(result.Error);
+            return Ok(result.Value);
         }
-        [HttpPut("{id}")]
-        public ActionResult<List<TimeEntryResponse>> UpdateTimeEntry(int id, TimeEntryUpdateRequest updateRequest)
+        return BadRequest(result.Error);
+    }
+    [HttpPut("{id}")]
+    public async Task<ActionResult<List<TimeEntryResponse>>> UpdateTimeEntry(int id, TimeEntryUpdateRequest updateRequest)
+    {
+        var result = await _timeEntryService.UpdateTimeEntry(id, updateRequest);
+        if (result.IsSuccess)
         {
-            var result = _timeEntryService.UpdateTimeEntry(id, updateRequest);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            return BadRequest(result.Error);
+            return Ok(result.Value);
         }
-        [HttpDelete("{id}")]
-        public ActionResult<List<TimeEntryResponse>> DeleteTimeEntry(int id)
+        return BadRequest(result.Error);
+    }
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<List<TimeEntryResponse>>> DeleteTimeEntry(int id)
+    {
+        var result = await _timeEntryService.DeleteTimeEntry(id);
+        if (result.IsSuccess)
         {
-            var result = _timeEntryService.DeleteTimeEntry(id);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            return BadRequest(result.Error);
+            return Ok(result.Value);
         }
+        return BadRequest(result.Error);
     }
 }

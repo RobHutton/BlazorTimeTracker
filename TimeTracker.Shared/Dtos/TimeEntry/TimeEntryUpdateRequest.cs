@@ -1,8 +1,15 @@
 ﻿namespace TimeTracker.Shared.Dtos.TimeEntry;
 
-public class TimeEntryUpdateRequest
+public record struct TimeEntryUpdateRequest(
+    string Project,
+    DateTime Start,
+    DateTime? End
+)
 {
-    public required string Project { get; set; }
-    public DateTime Start { get; set; } = DateTime.Now;
-    public DateTime? End { get; set; }
+    // Mark 'Project' as required
+    public required string Project { get; init; } = Project;
+
+    // If you want to set a default value for Start, it will be handled in the constructor
+    public DateTime Start { get; init; } = Start == default ? DateTime.Now : Start;
 }
+

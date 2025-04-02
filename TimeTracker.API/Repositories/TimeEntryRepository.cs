@@ -1,49 +1,53 @@
-﻿using TimeTracker.Shared.Entities;
-namespace TimeTracker.API.Repositories;
+﻿namespace TimeTracker.API.Repositories;
 
-public class TimeEntryRepository : ITimeEntryRepository
+public class TimeEntryRepository(DataContext dbContext) : ITimeEntryRepository
 {
-    private static List<TimeEntry> _timeEntries =
-    [
-        new TimeEntry { Id = 1, Project = "Time Tracker App", End = DateTime.Now.AddDays(7) },
-                new TimeEntry { Id = 2, Project = "Time Tracker App", Start = DateTime.Now.AddDays(1), End = DateTime.Now.AddDays(2) },
-                new TimeEntry { Id = 3, Project = "Time Tracker App", Start = DateTime.Now.AddDays(2), End = DateTime.Now.AddDays(3) },
-                new TimeEntry { Id = 4, Project = "Time Tracker App", Start = DateTime.Now.AddDays(3), End = DateTime.Now.AddDays(4) },
-                new TimeEntry { Id = 5, Project = "Time Tracker App", Start = DateTime.Now.AddDays(4), End = DateTime.Now.AddDays(5) }
-    ];
-    public List<TimeEntry> GetTimeEntries()
-    {
-        return _timeEntries;
-    }
-    public List<TimeEntry> CreateTimeEntry(TimeEntry timeEntry)
-    {
-        _timeEntries.Add(timeEntry);
-        return _timeEntries;
-    }
-    public List<TimeEntry>? UpdateTimeEntry(int id, TimeEntry timeEntry)
-    {
-        var updateIndex = _timeEntries.FindIndex(t => t.Id == id);
-        if (_timeEntries[updateIndex] is null)
-        {
-            return null;
-        }
-        _timeEntries[updateIndex] = timeEntry;
-        return _timeEntries;
-    }
+    private readonly DataContext _dbContext = dbContext;
 
-    public List<TimeEntry>? DeleteTimeEntry(int id)
+    public async Task<List<TimeEntry>> GetTimeEntries()
     {
-        var deleteIndex = _timeEntries.FindIndex(t => t.Id == id);
-        if (_timeEntries[deleteIndex] is null)
-        {
-            return null;
-        }
-        _timeEntries[deleteIndex].IsDeleted = true;
-        return _timeEntries;
+        return await _dbContext.TimeEntries.Where(e => !e.IsDeleted).ToListAsync();
     }
-
-    public TimeEntry? GetTimeEntryById(int id)
+    public async Task<TimeEntry?> GetTimeEntryById(int id)
     {
-        return _timeEntries.FirstOrDefault(e => e.Id == id);
+        return await _dbContext.TimeEntries.FindAsync(id);
+    }
+    public async Task<List<TimeEntry>> CreateTimeEntry(TimeEntry timeEntry)
+    {
+
+        _dbContext.TimeEntries.Add(timeEntry);
+        await _dbContext.SaveChangesAsync();
+        return await GetTimeEntries();
+    }
+    public async Task<List<TimeEntry>> UpdateTimeEntry(int id, TimeEntry timeEntry)
+    {
+        var updateEntry = await GetTimeEntryById(id) ?? throw new EntityNotFoundException();
+
+        // Update the properties
+        updateEntry.Project = timeEntry.Project;
+        updateEntry.Start = timeEntry.Start;
+        updateEntry.End = timeEntry.End;
+        updateEntry.Updated = DateTime.Now;
+
+        // Save changes if using EF
+        await _dbContext.SaveChangesAsync();  // Add this line if using EF
+
+        // Return the updated list
+        return await _dbContext.TimeEntries.ToListAsync();  // Return updated list from DB
+
+        throw new EntityNotFoundException();
+    }
+    public async Task<List<TimeEntry>> DeleteTimeEntry(int id)
+    {
+        var deleteEntry = await GetTimeEntryById(id) ?? throw new EntityNotFoundException();
+
+        // Update the properties
+        deleteEntry.IsDeleted = true;
+
+        // Save changes if using EF
+        await _dbContext.SaveChangesAsync();  // Add this line if using EF
+
+        // Return the updated list
+        return await _dbContext.TimeEntries.ToListAsync();  // Return updated list from DB
     }
 }
