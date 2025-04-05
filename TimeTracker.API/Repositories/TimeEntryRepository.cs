@@ -6,14 +6,15 @@ public class TimeEntryRepository(DataContext dbContext) : ITimeEntryRepository
 
     public async Task<List<TimeEntry>> GetTimeEntries()
     {
-        return await _dbContext.TimeEntries
-            .Include(t => t.Project)
-            .Where(e => !e.IsDeleted)
-            .ToListAsync();
+        return await _dbContext.TimeEntries.Where(e => !e.IsDeleted).ToListAsync();
     }
     public async Task<TimeEntry?> GetTimeEntryById(int id)
     {
         return await _dbContext.TimeEntries.FindAsync(id);
+    }
+    public async Task<List<TimeEntry>> GetTimeEntriesByProjectId(int projectId)
+    {
+        return await _dbContext.TimeEntries.Where(t => t.ProjectId == projectId && !t.IsDeleted).ToListAsync();
     }
     public async Task<List<TimeEntry>> CreateTimeEntry(TimeEntry timeEntry)
     {

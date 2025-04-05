@@ -13,7 +13,9 @@ public class ProjectRepository(DataContext dbContext) : IProjectRepository
     }
     public async Task<Project?> GetProjectById(int id)
     {
-        return await _dbContext.Projects.FindAsync(id);
+        return await _dbContext.Projects
+            .Include(p => p.TimeEntries.Where(t => !t.IsDeleted))
+            .FirstOrDefaultAsync(p => p.Id == id);
     }
     public async Task<List<Project>> CreateProject(Project project)
     {

@@ -3,6 +3,7 @@
 public static class Error
 {
     public static string GetTimeEntries = "Failed to get Time Entries";
+    public static string GetTimeEntriesByProjectId = "Failed to get Time Entries for Project";
     public static string CreateTimeEntry = "Failed to create Time Entry";
     public static string UpdateTimeEntry = "Failed to update Time Entry";
     public static string DeleteTimeEntry = "Failed to delete Time Entry";

@@ -21,6 +21,43 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository, ILogger<
             return Result<List<TimeEntryResponse>>.Fail($"{Error.GetTimeEntries}: {ex.Message}");
         }
     }
+    public async Task<Result<TimeEntryResponse>> GetTimeEntryById(int id)
+    {
+        try
+        {
+            var result = await _timeEntryRepository.GetTimeEntryById(id);
+            if (result is null)
+            {
+                return Result<TimeEntryResponse>.Fail(Error.GetTimeEntryById);
+            }
+            var response = result.Adapt<TimeEntryResponse>();
+            return Result<TimeEntryResponse>.Success(response);
+        }
+        catch (EntityNotFoundException ex)
+        {
+            _logger.LogError(ex, "{error}", Error.GetTimeEntryById);
+            return Result<TimeEntryResponse>.Fail($"{Error.GetTimeEntryById}: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "{error}", Error.GetTimeEntryById);
+            return Result<TimeEntryResponse>.Fail($"{Error.GetTimeEntryById}: {ex.Message}");
+        }
+    }
+    public async Task<Result<List<TimeEntryProjectResponse>>> GetTimeEntriesByProjectId(int projectId)
+    {
+        try
+        {
+            var result = await _timeEntryRepository.GetTimeEntriesByProjectId(projectId);
+            var response = result.Adapt<List<TimeEntryProjectResponse>>();
+            return Result<List<TimeEntryProjectResponse>>.Success(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "{error}", Error.GetTimeEntriesByProjectId);
+            return Result<List<TimeEntryProjectResponse>>.Fail(Error.GetTimeEntriesByProjectId);
+        }
+    }
 
     public async Task<Result<List<TimeEntryResponse>>> CreateTimeEntry(TimeEntryCreateRequest createRequest)
     {
@@ -71,30 +108,6 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository, ILogger<
         {
             _logger.LogError(ex, "{error}", Error.DeleteTimeEntry);
             return Result<List<TimeEntryResponse>>.Fail($"{Error.DeleteTimeEntry}: {ex.Message}");
-        }
-    }
-
-    public async Task<Result<TimeEntryResponse>> GetTimeEntryById(int id)
-    {
-        try
-        {
-            var result = await _timeEntryRepository.GetTimeEntryById(id);
-            if (result is null)
-            {
-                return Result<TimeEntryResponse>.Fail(Error.GetTimeEntryById);
-            }
-            var response = result.Adapt<TimeEntryResponse>();
-            return Result<TimeEntryResponse>.Success(response);
-        }
-        catch (EntityNotFoundException ex)
-        {
-            _logger.LogError(ex, "{error}", Error.GetTimeEntryById);
-            return Result<TimeEntryResponse>.Fail($"{Error.GetTimeEntryById}: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "{error}", Error.GetTimeEntryById);
-            return Result<TimeEntryResponse>.Fail($"{Error.GetTimeEntryById}: {ex.Message}");
         }
     }
 }

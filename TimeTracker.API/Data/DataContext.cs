@@ -22,6 +22,14 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             .WithMany(p => p.TimeEntries) // A Project has many TimeEntries
             .HasForeignKey(t => t.ProjectId) // The foreign key in TimeEntry
             .OnDelete(DeleteBehavior.Cascade); // Deleting a Project deletes its TimeEntries (optional)
+
+        // Auto-Include Navigation
+        // There are performance indication for always setting include
+        // You can explicitly include in EF queries
+        // You can also explicitly ignore the include in EF queries
+        modelBuilder.Entity<TimeEntry>()
+             .Navigation(p => p.Project)
+             .AutoInclude();
     }
 }
 

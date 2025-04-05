@@ -3,6 +3,7 @@
 public interface ITimeEntryService
 {
     Task<Result<List<TimeEntryResponse>>> GetTimeEntries();
+    Task<Result<List<TimeEntryProjectResponse>>> GetTimeEntriesByProjectId(int projectId);
     Task<Result<List<TimeEntryResponse>>> CreateTimeEntry(TimeEntryCreateRequest createRequest);
     Task<Result<List<TimeEntryResponse>>> UpdateTimeEntry(int id, TimeEntryUpdateRequest updateRequest);
     Task<Result<List<TimeEntryResponse>>> DeleteTimeEntry(int id);

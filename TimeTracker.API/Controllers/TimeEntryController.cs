@@ -8,6 +8,7 @@ public class TimeEntryController(ITimeEntryService timeEntryService) : Controlle
 {
     private readonly ITimeEntryService _timeEntryService = timeEntryService;
 
+    // GET: api/TimeEntry
     [HttpGet]
     public async Task<ActionResult<List<TimeEntryResponse>>> GetTimeEntries()
     {
@@ -18,10 +19,22 @@ public class TimeEntryController(ITimeEntryService timeEntryService) : Controlle
         }
         return BadRequest(result.Error);
     }
-    [HttpGet("{id}")]
-    public async Task<ActionResult<List<TimeEntryResponse>>> GetTimeEntryById(int id)
+    // GET: api/TimeEntry/5
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<TimeEntryResponse>> GetTimeEntryById(int id)
     {
         var result = await _timeEntryService.GetTimeEntryById(id);
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+        return BadRequest(result.Error);
+    }
+    // GET: api/TimeEntry/project/3
+    [HttpGet("project/{projectId:int}")]
+    public async Task<ActionResult<List<TimeEntryProjectResponse>>> GetTimeEntiesByProjectId(int projectId)
+    {
+        var result = await _timeEntryService.GetTimeEntriesByProjectId(projectId);
         if (result.IsSuccess)
         {
             return Ok(result.Value);
