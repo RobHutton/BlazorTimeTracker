@@ -6,7 +6,10 @@ public class TimeEntryRepository(DataContext dbContext) : ITimeEntryRepository
 
     public async Task<List<TimeEntry>> GetTimeEntries()
     {
-        return await _dbContext.TimeEntries.Where(e => !e.IsDeleted).ToListAsync();
+        return await _dbContext.TimeEntries
+            .Include(t => t.Project)
+            .Where(e => !e.IsDeleted)
+            .ToListAsync();
     }
     public async Task<TimeEntry?> GetTimeEntryById(int id)
     {
@@ -30,12 +33,10 @@ public class TimeEntryRepository(DataContext dbContext) : ITimeEntryRepository
         updateEntry.Updated = DateTime.Now;
 
         // Save changes if using EF
-        await _dbContext.SaveChangesAsync();  // Add this line if using EF
+        await GetTimeEntries();  // Add this line if using EF
 
         // Return the updated list
         return await _dbContext.TimeEntries.ToListAsync();  // Return updated list from DB
-
-        throw new EntityNotFoundException();
     }
     public async Task<List<TimeEntry>> DeleteTimeEntry(int id)
     {
@@ -43,6 +44,7 @@ public class TimeEntryRepository(DataContext dbContext) : ITimeEntryRepository
 
         // Update the properties
         deleteEntry.IsDeleted = true;
+        deleteEntry.Deleted = DateTime.Now;
 
         // Save changes if using EF
         await _dbContext.SaveChangesAsync();  // Add this line if using EF

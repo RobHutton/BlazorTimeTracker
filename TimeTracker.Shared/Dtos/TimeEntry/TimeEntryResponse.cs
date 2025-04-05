@@ -1,8 +1,11 @@
-﻿namespace TimeTracker.Shared.Dtos.TimeEntry;
+﻿using TimeTracker.Shared.Dtos.Project;
+
+namespace TimeTracker.Shared.Dtos.TimeEntry;
 
 public record struct TimeEntryResponse(
     int Id,
-    string Project,
+    string Description,
     DateTime Start,
-    DateTime? End
+    DateTime? End,
+    TimeEntryProjectResponse Project
 );
