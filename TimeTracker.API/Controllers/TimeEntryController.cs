@@ -32,7 +32,7 @@ public class TimeEntryController(ITimeEntryService timeEntryService) : Controlle
     }
     // GET: api/TimeEntry/project/3
     [HttpGet("project/{projectId:int}")]
-    public async Task<ActionResult<List<TimeEntryProjectResponse>>> GetTimeEntiesByProjectId(int projectId)
+    public async Task<ActionResult<List<TimeEntryResponse>>> GetTimeEntiesByProjectId(int projectId)
     {
         var result = await _timeEntryService.GetTimeEntriesByProjectId(projectId);
         if (result.IsSuccess)

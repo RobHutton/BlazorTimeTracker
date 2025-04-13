@@ -44,18 +44,18 @@ public class TimeEntryService(ITimeEntryRepository timeEntryRepository, ILogger<
             return Result<TimeEntryResponse>.Fail($"{Error.GetTimeEntryById}: {ex.Message}");
         }
     }
-    public async Task<Result<List<TimeEntryProjectResponse>>> GetTimeEntriesByProjectId(int projectId)
+    public async Task<Result<List<TimeEntryResponse>>> GetTimeEntriesByProjectId(int projectId)
     {
         try
         {
             var result = await _timeEntryRepository.GetTimeEntriesByProjectId(projectId);
-            var response = result.Adapt<List<TimeEntryProjectResponse>>();
-            return Result<List<TimeEntryProjectResponse>>.Success(response);
+            var response = result.Adapt<List<TimeEntryResponse>>();
+            return Result<List<TimeEntryResponse>>.Success(response);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "{error}", Error.GetTimeEntriesByProjectId);
-            return Result<List<TimeEntryProjectResponse>>.Fail(Error.GetTimeEntriesByProjectId);
+            return Result<List<TimeEntryResponse>>.Fail(Error.GetTimeEntriesByProjectId);
         }
     }
 
