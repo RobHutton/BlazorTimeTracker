@@ -1,0 +1,39 @@
+﻿@page "/timeentries"
+
+<PageTitle>Time Entries</PageTitle>
+<h3>Time Entries</h3>
+@{
+    if (IsLoading)
+    {
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+    }
+    else if (!string.IsNullOrEmpty(ErrorMessage)) {
+        <div class="alert alert-danger">
+            <strong>Error:</strong> @ErrorMessage
+        </div>
+    }
+    else {
+        // <ProjectSelector />
+        <button class="btn btn-primary mb-2" @onclick="CreateTimeEntry">Create Time Entry</button>
+        <QuickGrid Class="table" Items="FilteredTimeEntries" Pagination="@pagination">
+            <PropertyColumn Title="Project" Property="t => t.Project.Name">
+                <ColumnOptions>
+                    <div>
+                        <input type="search" autofocus @bind="projectFilter" @bind:event="oninput" placeholder="Search Project" />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <PropertyColumn Title="Start Date" Property="t => t.Start"/>
+            <PropertyColumn Title="End Date" Property="t => t.End" />
+            <PropertyColumn Title="Duration" Property="t => GetDuration(t.Start, t.End)" />
+            <PropertyColumn Title="Description" Property="t => t.Description" />
+            <TemplateColumn>
+                <button class="btn btn-primary mb-2" onclick="@(() => EditTimeEntry(context.Id))">Edit</button>
+            </TemplateColumn>
+        </QuickGrid>
+        <Paginator State="@pagination"/>
+    }
+}

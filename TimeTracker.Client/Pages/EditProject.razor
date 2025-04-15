@@ -1,0 +1,87 @@
+﻿@page "/project"
+@page "/project/{id:int}"
+@inject IProjectService ProjectService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<h3>@(Id is null ? "Create" : "Edit") Project</h3>
+<EditForm Model="project" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <div class="mb-4">
+        <label for="name"> Name</label>
+        <InputText id="name" @bind-Value="project.Name" class="form-control" />
+        <ValidationMessage For="() => project.Name" />
+    </div>
+    <div class="d-flex justify-content-between mb-4">
+        <div>
+            <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+        </div>
+        <div>
+            @{
+                if (Id is not null)
+                {
+                    <button type="button" class="btn btn-danger mx-4" @onclick="DeleteProject">Delete</button>
+                }
+            }
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </div>
+</EditForm>
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    ProjectRequest project = new();
+    protected override void OnInitialized()
+    {
+        ProjectService.OnChange += StateHasChanged;
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            var result = await ProjectService.GetProjectById(Id.Value);
+            project = new ProjectRequest
+            {
+                Name = result.Name
+            };
+        }
+    }
+
+    public void Dispose()
+    {
+        ProjectService.OnChange -= StateHasChanged;
+        GC.SuppressFinalize(this);
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Id is null)
+        {
+            // create time entry
+            await ProjectService.CreateProject(project);
+        }
+        else
+        {
+            // update time entry
+            await ProjectService.UpdateProject((int)Id, project);
+        }
+        NavigationManager.NavigateTo("/projects");
+    }
+    private async Task DeleteProject()
+    {
+        if (Id is not null) {
+            var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this time entry?");
+            if (confirmed)
+            {
+                await ProjectService.DeleteProject((int)Id);
+            }
+            NavigationManager.NavigateTo("/projects");
+        }
+    }
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/projects");
+    }
+}

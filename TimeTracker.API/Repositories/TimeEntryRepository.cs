@@ -28,16 +28,16 @@ public class TimeEntryRepository(DataContext dbContext) : ITimeEntryRepository
         var updateEntry = await GetTimeEntryById(id) ?? throw new EntityNotFoundException();
 
         // Update the properties
-        updateEntry.Project = timeEntry.Project;
+        updateEntry.ProjectId = timeEntry.ProjectId;
         updateEntry.Start = timeEntry.Start;
         updateEntry.End = timeEntry.End;
         updateEntry.Updated = DateTime.Now;
 
         // Save changes if using EF
-        await GetTimeEntries();  // Add this line if using EF
+        await _dbContext.SaveChangesAsync();  // Add this line if using EF
 
         // Return the updated list
-        return await _dbContext.TimeEntries.ToListAsync();  // Return updated list from DB
+        return await GetTimeEntries();  // Return updated list from DB
     }
     public async Task<List<TimeEntry>> DeleteTimeEntry(int id)
     {

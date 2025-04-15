@@ -1,0 +1,36 @@
+﻿@page "/projects"
+
+<PageTitle>Projects</PageTitle>
+<h3>Projects</h3>
+@{
+    if (IsLoading)
+    {
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+    }
+    else if (!string.IsNullOrEmpty(ErrorMessage)) {
+        <div class="alert alert-danger">
+            <strong>Error:</strong> @ErrorMessage
+        </div>
+    }
+    else {
+        // <ProjectSelector />
+        <button class="btn btn-primary mb-2" @onclick="CreateProject">Create Project</button>
+        <QuickGrid Class="table" Items="FilteredProjects" Pagination="@pagination">
+            <PropertyColumn Title="Project" Property="t => t.Name">
+                <ColumnOptions>
+                    <div>
+                        <input type="search" autofocus @bind="projectFilter" @bind:event="oninput" placeholder="Search Project" />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <PropertyColumn Title="Name" Property="t => t.Name"/>
+            <TemplateColumn>
+                <button class="btn btn-primary mb-2" onclick="@(() => EditProject(context.Id))">Edit</button>
+            </TemplateColumn>
+        </QuickGrid>
+        <Paginator State="@pagination"/>
+    }
+}
